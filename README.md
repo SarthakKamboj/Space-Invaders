@@ -13,10 +13,12 @@ As part of my learning, I am reading the Game Engine Architecture book by Jason 
 
 File Structure
 ---------------
+```tree
 .
 ├── art                   #  art files
 ├── note                    # notes taken from reading
 ├── src                     # Source files (alternatively `lib` or `app`)
+```
 
 Goals
 ---------
