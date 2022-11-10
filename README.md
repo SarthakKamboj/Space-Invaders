@@ -10,6 +10,9 @@ This project is meant to be a recreation of the original Space Invaders game. Th
 As part of my learning, I am reading the Game Engine Architecture book by Jason Gregory. I will also be taking notes are storing them in the notes folder of this repository. I am also creating devlogs about the progress of my game as well as an overview of the concepts I have learned and issues I have encountered.
 
 I also have a Trello link to track tasks and features that must be completed, are being completed, and have been completed.
+
+<br/>
+
 [Trello Board](https://trello.com/b/fQBEN9YD/space-invaders) 
 
 ## File Structure
