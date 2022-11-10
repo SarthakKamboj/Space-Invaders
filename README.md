@@ -15,9 +15,9 @@ File Structure
 ---------------
 ```tree
 .
-├── art                   #  art files
-├── note                    # notes taken from reading
-├── src                     # Source files (alternatively `lib` or `app`)
+├── art                   # art files
+├── notes                 # notes taken from reading
+├── src                   # source files 
 ```
 
 Goals
