@@ -1,0 +1,134 @@
+Subsystem Startup/Shutdown
+-----------------------------
+- global and static objects are constructed before the program's main() or WinMain()
+	- but they are constructed in random order
+	- they are destructed for main() but also in random order
+	- for these objects, maybe have startUp and shutDown functions to control when these things happen
+
+Memory Allocation
+------------------
+- keep heap allocations to a min, don't heap alloc within a tight loop
+- use custom allocators
+	- to satify mem requests with the preallocated memory
+	- and to optimize based on usage patterns
+
+	Stack Allocators
+	-----------------
+	- use malloc() or a global new, or global array of bytes(this will come from BSS segment)
+		- BSS (Block starting symbol)
+			- aka the uninitialized data segment
+			- uninitialized or initialized with 0
+
+		= executable for a data segment split into two parts
+			- .data
+				- contributes to the size of the the exec file
+				- holds global or static variables that are initialized to actual values
+			- .bss	
+				- contributes barely anything to size of exec file (mainly b/c exec file stores the length of bss section, not its data)
+				- program loader allocates memory for the bss section when it loads the program before main() is entered
+				- holds global or static variables uninitialized or initialized to 0
+			
+	- ptr to top of stack is maintained, below ptr is in use, above ptr is free
+	- important that things are freed in the opposite order that they were allocated
+		- can solve this by rolling back to stack to prev roll-back pt
+
+	Double-Ended Stack Allocator
+	-----------------------------
+	- used sometimes since it could lead to more efficient mem use
+	- ex) Midway's Hydro Thunder
+		- bottom stack used to loading/unloading levels
+		- top stack used for temp mem blocks alloc and freed every frame
+		- helped w/ mem frag	
+		- also prob level data close to each other while frame data close to each other
+	
+	Pool Allocators
+	-------------------
+	- alloc lots of small blocks of mem that are of same size (ex is alloc many matricies)
+	- alloc large block of mem whose size of multiple of the size of the elements it is assoc w/
+	- each elem added to singly linked list of free elements
+	- when alloc requested, give next free elem off linked list and put it back upon freeing
+	- could use next attrib to store pointers but if elementSize >= sizeof(void*), use remaining bits as the next ptr
+
+	Aligned Mem allocations
+	------------------------
+	- all mem allocators should be able to return aligned mem blocks
+	- steps
+		1. start by masking and ANDing original address w/ (ALIGNMENT-1)
+			- it seems this gives the modded value of the mem address 0-indexed
+			- essentially telling how many bits too high the address is from the alignment
+			- adjustment = (alignment - bits too high)
+			- add adjustment to the original address that was going to be used
+
+	Single-Frame Allocators
+	--------------------------
+	- reserve a block of mem and manage it w/ stack alloc
+	- clear (move the top ptr of stack alloc) to bottom of mem
+	- ensure to not cache ptrs to single-frame mem block across frame boundary
+
+	Double-Buffered Allocators
+	---------------------------
+	- allocates mem for frame i to i+1
+	- use 2 single-frame stack allocs and switch between them every frame, so if something gets alloced one frame, it stays there the rest of that frame as well as the next frame before being cleared out
+
+	Memory Fragmentation
+	---------------------
+	- get weird regions of free and in-use parts of memory
+	- leads to failed allocations even when there are enough free bytes to satify requests
+	- not as much of an issue when a virtual address space is used (maybe learn about virtual addressing in the future)
+	- stack and pool allocators are pretty free of mem frag errors
+		- pool alloc do become fragment but do not cause out-of-mem errors b/c all blocks are of same size and pool heap alloc was done so accordingly
+
+	Defragmentation and Relocation
+	------------------------------
+	- if objects alloc and freed in random order, frag can be avvoided by defragmenting heap
+		- essentially coalescing free sections by shifting alloc blocks from high mem addresses to lower addresses
+		- can do this by searching for first free section, then finding alloced sections after and swap with free section until no more alloced sections after
+	- gives rise to problem if ptrs to alloced sections are stored in the program
+		- either programmer keeps track of ptrs manually so they can be relocated or use smart ptrs/handles
+	- another issue w/ relocations comes when certain mem blocks can be relocated
+		- ex) third party libraries that do not use smart prts/handles
+	- defragmentation does not need to happen all at once, it can happened over many frames
+		- ex) allow up to N alloc blocks to be shifted every frame where N can be like 8 or 16, maybe alot a certain amount of time each frame to shift alloced blocks
+		- as long alloc/deallocs aren't happening faster than defragmentation shifts, heap will remain mostly defragmented
+			- I'm guessing this means be careful about heap allocs/deallocs that happen every frame since this makes the job of the defragmentation harder and less reliable
+
+	Cache Coherency
+	----------------	
+	- accessing main system RAM can take thousands of processor cycles
+	- loads piece of mem into cache line (8-512 bytes)
+	- ex) write-through cache: all writes to cache are mirror to main RAM immediately
+	- ex) write-back (copy-back) cache: writes to cache are only flushed to main RAM under certain circumstances, like when a new cache line needs to be read in or if program requests manual flush
+	- L2 cache misses usually more expensive than L1 cache misses
+	- load-hit-store is bad kind of cache miss where CPU writes data to mem addr but read it back before it can make it to L1 cache
+
+	Instruction Cache (I-Cache) and Data Cache (D-cache)
+	----------------------------------------------------
+	- both data and code are cached
+	- I-cache is used to preload exec machine code before it runs
+	- D-cache used to speed up read/write data to main RAM
+	- so programs can slow down from I-cache and D-cache miss
+
+	Avoiding Cache Misses
+	---------------------
+	- Avoiding D-cache misses
+		- organize data in contigous blocks, as small as possible, and access them sequentially
+		- when data contig., you don't "jump around" too much
+	- Avoiding I-cache misses
+		- important info
+			- machine code for a single func is usually contig in mem
+			- functions laid out in mem in the order they appre in translations unit's source code (.cpp file)
+		- avoid calling functions from within performance-critical code
+		- try to calling function immediately before or after calling func, and try not to call it from another file
+		- use inline functions reasonable
+
+Engine Configuration
+--------------------
+- configurable vars useful if can be stored somewhere and retrived later
+- options include:
+	1. text files/xml
+		- maybe create a folder for the app in "C:\Documents and Settings\Application Data" and store info there
+	2. compressed bin files (especially for removable mem cards since they used compressed bin files)
+	3. Windows registry
+	4. command line options
+	5. env vars
+	6. online user profiles
