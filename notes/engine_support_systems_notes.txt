@@ -68,7 +68,7 @@ Memory Allocation
 	Double-Buffered Allocators
 	---------------------------
 	- allocates mem for frame i to i+1
-	- use 2 single-frame stack allocs and switch between them every frame, so if something gets alloced one frame, it stays there the rest of that frame as well as the next frame before being cleared out
+	- use 2 single-frame stack allocs and switch between them every frame, so if something gets allocated on one frame, it stays there the rest of that frame as well as the next frame before being cleared out
 
 	Memory Fragmentation
 	---------------------
