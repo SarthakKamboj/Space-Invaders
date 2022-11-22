@@ -31,6 +31,8 @@ I also have a Trello link to track tasks and features that must be completed, ar
 - [ ] Serialization
 - [ ] Profiling/Debugging
 - [ ] Math Library
+- [ ] Text Rendering
+- [ ] Game Release
 
 ## Demo
 Coming soon!

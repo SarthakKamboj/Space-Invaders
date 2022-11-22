@@ -132,3 +132,15 @@ Engine Configuration
 	4. command line options
 	5. env vars
 	6. online user profiles
+
+Strings
+--------
+- comparing strings is done in O(n) time
+- string class have weird copy times which can be expensive b/c of heap alloc, this can take thousands of cycles
+- string class could be useful for filesystem stuff
+- hashed string ids, hash func maps string to semi-unique int
+- strings should not be used in the production state of a game
+
+	Encodings
+	---------
+	- 
