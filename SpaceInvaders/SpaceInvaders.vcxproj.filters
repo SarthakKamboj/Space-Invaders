@@ -21,12 +21,18 @@
     <ClCompile Include="stack_alloc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="frame_alloc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stack_alloc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pool_alloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frame_alloc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
