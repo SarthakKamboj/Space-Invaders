@@ -6,9 +6,7 @@
 #define STACK_SIZE 1024 * sizeof(float)
 
 class stack_alloc_t {
-
 public:
-
 	struct internal_stack_frame_t {
 		char* frame_start;
 		int num_bytes;
@@ -33,7 +31,9 @@ public:
 	stack_alloc_t();
 	~stack_alloc_t();
 	char* cur;
+	// allocates a specified amount
 	char* allocate(int num_bytes);
+	// deallocates a specific variable
 	void deallocate();
 	void clear();
 	void create_stack_frame(stack_alloc_t::stack_frame_t& stack_frame);
