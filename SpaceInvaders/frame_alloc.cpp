@@ -1,7 +1,7 @@
 #include "frame_alloc.h"
 
 void single_frame_alloc_t::handle_sof() {
-	frame_stack_alloc.create_stack_frame(stack_frame);
+	frame_stack_alloc.create_stack_frame();
 }
 
 char* single_frame_alloc_t::allocate(int num_bytes) {
@@ -14,10 +14,10 @@ void single_frame_alloc_t::handle_eof() {
 
 void double_frame_alloc_t::handle_sof() {
 	if (cur_alloc == &frame_stack_alloc_a) {
-		cur_alloc->create_stack_frame(stack_frame_a);
+		cur_alloc->create_stack_frame();
 	}
 	else {
-		cur_alloc->create_stack_frame(stack_frame_b);
+		cur_alloc->create_stack_frame();
 	}
 }
 
