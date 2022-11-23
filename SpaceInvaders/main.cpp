@@ -2,11 +2,20 @@
 #include "allocators/stack_alloc.h"
 #include "allocators/pool_alloc.h"
 #include "allocators/frame_alloc.h"
+#include "filesystem/filepath.h"
 
 #define TEST_STACK_ALLOC 0
 #define TEST_POOL_ALLOC 0
 #define TEST_SINGLE_FRAME_STACK_ALLOC 0
-#define TEST_DOUBLE_FRAME_STACK_ALLOC 1
+#define TEST_DOUBLE_FRAME_STACK_ALLOC 0
+#define TEST_FILEPATH 1
+
+void print_dirs(const filenames_t& filenames) {
+	printf("\n");
+	for (const auto& filename : filenames) {
+		std::cout << filename.data() << std::endl;
+	}
+}
 
 int main() {
 
@@ -106,6 +115,47 @@ int main() {
 		*c_ptr = 25 * (i + 1);
 		double_frame_alloc.handle_eof();
 	}
+
+#elif TEST_FILEPATH
+
+	// len 61
+	filepath_t filepath("C:\\Sarthak\\programming\\SpaceInvaders\\SpaceInvaders\\allocators");
+	bool is_valid_path = filepath.is_valid_path();
+	filenames_t filenames;
+	filepath.list_subdir_and_subfiles(filenames);
+	print_dirs(filenames);
+
+	const char new_path[MAX_PATH] = {};
+	memcpy((void*)new_path, filenames[0].data(), MAX_PATH);
+	char* p = (char*)new_path;
+	filepath.append_to_path(new_path);
+
+	filepath.go_to_parent_directory();
+
+	filenames.clear();
+	filepath.list_subdir_and_subfiles(filenames);
+	print_dirs(filenames);
+
+	filepath.go_to_parent_directory();
+	filepath.go_to_parent_directory();
+	filepath.go_to_parent_directory();
+	filepath.go_to_parent_directory();
+	filepath.go_to_parent_directory();
+
+	filepath.go_to_parent_directory();
+	filepath.go_to_parent_directory();
+	filepath.go_to_parent_directory();
+
+	filenames.clear();
+	filepath.list_subdir_and_subfiles(filenames);
+	print_dirs(filenames);
+
+	bool is_valid_path_3 = filepath.is_valid_path();
+
+	const char* filename = filepath.get_filename();
+	bool is_dir = filepath.is_directory();
+
+
 
 #endif
 }

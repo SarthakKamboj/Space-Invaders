@@ -24,6 +24,9 @@
     <ClCompile Include="allocators\stack_alloc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="filesystem\filepath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="allocators\frame_alloc.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="allocators\stack_alloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="filesystem\filepath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
