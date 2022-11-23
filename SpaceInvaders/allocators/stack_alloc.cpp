@@ -25,6 +25,7 @@ char* stack_alloc_t::allocate(int num_bytes) {
 	char* cur_saved = cur;
 	cur += num_bytes;
 	num_bytes_of_cur_stack_frame += num_bytes;
+	memset(cur_saved, 0, num_bytes);
 	return cur_saved;
 }
 

@@ -64,7 +64,7 @@ pool_chunk_t<T, max_num>* pool_alloc_t<T, max_num>::allocate() {
 	old_head->next = NULL;
 	num_elements_free -= 1;
 
-	*old_head->data_ptr = {};
+	// *old_head->data_ptr = {};
 
 	return old_head;
 }
