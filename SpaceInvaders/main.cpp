@@ -1,7 +1,7 @@
 #include <iostream>
-#include "stack_alloc.h"
-#include "pool_alloc.h"
-#include "frame_alloc.h"
+#include "allocators/stack_alloc.h"
+#include "allocators/pool_alloc.h"
+#include "allocators/frame_alloc.h"
 
 #define TEST_STACK_ALLOC 0
 #define TEST_POOL_ALLOC 0

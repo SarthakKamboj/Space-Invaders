@@ -18,21 +18,21 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stack_alloc.cpp">
+    <ClCompile Include="allocators\frame_alloc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="frame_alloc.cpp">
+    <ClCompile Include="allocators\stack_alloc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stack_alloc.h">
+    <ClInclude Include="allocators\frame_alloc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pool_alloc.h">
+    <ClInclude Include="allocators\pool_alloc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="frame_alloc.h">
+    <ClInclude Include="allocators\stack_alloc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
