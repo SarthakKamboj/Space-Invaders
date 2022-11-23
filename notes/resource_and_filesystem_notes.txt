@@ -1,0 +1,44 @@
+- most game engines have resource/asset manager so multiple copies of the same asset are not loaded
+
+File system
+--------------
+- important functionality:
+	- manipulating filenames/paths
+	- file io
+	- scanning contents of directory
+	- handling async file IO requests (for streaming)
+
+	File Names
+	------------
+	- have wrapper to handle file names in OS independent way
+	ex) volume(volume specifier)/directory1/directory2/…/directoryN/file-name
+	- volume specifier on windows is C:\
+	- \game\assets\animation\walk.anim (current working volume)
+	- \\joe-dell\Shared_Files\Images\foo.jpg (network path - specified by double slash)
+
+	- search path is a string containing a list of paths (comma or semicolon separated) used to search certain directories/paths
+	- useful directory api things
+		- isolating the directory, filename and extension, canonicalizing a path, converting, Resources and the File System, and back and forth between absolute and relative paths
+	- on Win32...use shlwapi.h and shlwapi.dll
+
+	Basic File IO
+	---------------
+	- file io API is buffered if input/output data buffers are managed for u
+		- sometimes called stream IO API b/c they provide abstraction that makes disk files look like streams of bytes
+	- if not...it is called unbuffered API
+	- advantage of using low-level systems calls vs standard c lib function is they expose all details of the native file system
+		- ex) can control security attribs of files w/ Windows native API
+	- should create file io wrapper
+	- c lib file IO is synchronous
+
+	Streaming
+	-----------
+	- act of loading data in teh background while main program continues to run
+	- can also do it where u do some work but if cannot do anymore...then call func to wait until async req finishes
+	- async io system should be capable of suspending lower-priority requests so higher-priority io req have a chance to complete within their deadlines
+	- async file io works by handling io req in a separate thread
+	- main thread calls function and places req on a queue then io thread picks up req from queue and handles them sequentially using blocking io routines
+	- at the end, callback for main thread func is called
+	- if main thread chooses to wait for async io...this is handled via semaphore
+	- every async req has an associated semaphore
+	- almost every sync op can be transformed into async op by moving to separate thread

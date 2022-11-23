@@ -140,7 +140,3 @@ Strings
 - string class could be useful for filesystem stuff
 - hashed string ids, hash func maps string to semi-unique int
 - strings should not be used in the production state of a game
-
-	Encodings
-	---------
-	- 
