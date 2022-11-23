@@ -33,7 +33,7 @@ File system
 
 	Streaming
 	-----------
-	- act of loading data in teh background while main program continues to run
+	- act of loading data in the background while main program continues to run
 	- can also do it where u do some work but if cannot do anymore...then call func to wait until async req finishes
 	- async io system should be capable of suspending lower-priority requests so higher-priority io req have a chance to complete within their deadlines
 	- async file io works by handling io req in a separate thread
@@ -42,3 +42,108 @@ File system
 	- if main thread chooses to wait for async io...this is handled via semaphore
 	- every async req has an associated semaphore
 	- almost every sync op can be transformed into async op by moving to separate thread
+
+	Resource Manager
+	----------------------
+	- two components
+		1. chain of off-line tools to transform asset into engine-ready form
+		2. manage resources at runtime, loading them into in advanced and unloaded when no longer needed 
+	
+	offline resource management
+	-----------------------------
+	1. asset passes from asseting conditioning pipeline to convert assets into binary format needed by engine
+		- metadata for these resources are housed in resource database
+
+		Asset Conditioning Pipeline
+		----------------------------
+		1. Exporter - write plugin in art application to export in format for next step of tool chain
+		2. Resource compile - may need to change asset data to be more game ready
+			- ex) rearrange mesh triangles into strip, compress a texture bitmap
+		3. Resource linkers - may need to link together assets to form a bigger asset needed by the game in a game ready format
+
+		Resource Dependencies
+		----------------------
+		Ex) mesh refers to one or more materials, which in turn refers to various textures
+		- Dependencies also tell us which assets need to be rebuilt when a particular asset changes
+
+	runtime resource management
+	------------------------------
+	- responsibilities:
+		- ensure only 1 copy of each unique resources exists in mem
+		- manages lifetime of resource
+		- load composite resources (resource made of other resources) 
+			- ex) 3d model has mesh, 1 or more materials, one or more textures, anims, etc.
+			- must ensure subresources are loaded and cross-referenced apropriately
+		= allows for custom processing to be performmed if necessary
+		- maybe has unified interface to handle many resource types
+		- allows for streaming if engine supports it
+
+	- when loading files, 3 biggest costs are:
+		1) seek times	
+		2) time required to open file
+		3) time to read data from file into mem
+
+	- often times, custom engine formats are used to limit runtime formatting in favor of offline changes
+
+	- every resource should have guid
+		- can be file path
+
+	Resource Registry
+	------------------
+	- simplest implementation is dictionary with key as unique id and value is ptr to resource in mem
+	- if key not found in dictionary upon look, some approaches are:
+		1) resources loaded prior to gameplay, w/ loading screen in the beginning
+		2) resource loaded async/streamed
+			ex) resource for level b loaded while player playing level a
+
+	Resource lifetime
+	---------------------
+	- could use ref count to keep track of which resources will be used in the next level to know which ones to unload vs keep
+
+	Resource Mem management
+	------------------------
+	- some in video mem like textures, shaders, vertex buffers, etc.
+	- things needed for lifetime of game may be in one part of mem
+	- things needed to be loaded/unloaded frequently in other parts
+
+	problems that arise:
+		- mem fragmentation
+		- stack alloc good if
+			- game is linear and level-centric (loading screen to plays levels to loading to plays level)
+			- each levels fit into mem in its entirety
+
+			- load in load-and-stay-resident (LSR) resources, then load in levels specific resources and clear to this point in stack whenever u need to clear the level
+
+		- pool alloc good if
+			- load level resources in chunks (will need to look more into this later)
+			- one issue is last chunk of resource may not fully utilize the chunk or block it resides in
+
+		- a games resource dependencies can be respresented as a directed gaph or interdepedent data objects
+		- cross ref can within the same file (internal) or different file (external)
+			- can handle cross ref by referencing with GUID
+
+		- will need to review pointer fix-up tables
+
+		Storing C++ Objects as Binary Imgs: Constructors
+		--------------------------------------------------
+		- solutions:
+			1) only use C/C++ strucuts w/ no virtual functions
+			2) Or save a table containing offsets of all objects in your binary image to know which class each object is an instance of
+				void* pObject = ConvertOffsetToPointer(objectOffset);
+				::new(pObject) ClassName; // placement-new syntax
+		
+		Referencing external things
+		----------------------------
+		- specify path to resource file as well as GUID of data object in question
+		- make sure to load external dependencies first before work on current loads
+
+		Post Load Inititialization
+		---------------------------
+		- loading things into video mem must be done at runtime
+		- in non-obj=oriented language like C, may have look-up table that maps each resource to a pair of function ptrs, one of post-load init and one of teardown
+		- otherwise use polymorphism
+		- sometimes data is appended to resource so more mem is need in main RAM than on file is needed to allow for this
+		- other times, data is overwritten
+		- sometimes, engines have resource loading w/ 2 ways:
+			1) directly into final resting place in mem
+			2) temporary area of mem - here maybe some of the post load init is done and them put into final resting place
