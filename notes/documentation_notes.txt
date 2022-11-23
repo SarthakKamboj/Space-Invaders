@@ -1,0 +1,4 @@
+windows file management
+---------------------------
+info - https://learn.microsoft.com/en-us/windows/win32/fileio/file-management
+available function - https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getshortpathnamew
