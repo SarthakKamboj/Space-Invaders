@@ -6,6 +6,7 @@
 // OVERLAPPED overlap_for_read_async = {};
 extern int read_async;
 std::unordered_map<HANDLE, file_io::read_async_callback> callback_map;
+pool_alloc_t<OVERLAPPED, 256> event_pool;
 
 int file_io::get_file_size(const char* file_path) {
 	HANDLE handle = CreateFileA(file_path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -71,7 +72,8 @@ void file_io::read_file_async(const char* file_path, char* output_buffer, int am
 	HANDLE hReadEvent = CreateEventA(0, TRUE, FALSE, "ReadCompletionEvent");
 	std::cout << "handle: " << handle << std::endl;
 	std::cout << "hReadEvent: " << hReadEvent << std::endl;
-	LPOVERLAPPED overlap_for_read_async = new OVERLAPPED;
+	// LPOVERLAPPED overlap_for_read_async = new OVERLAPPED;
+	LPOVERLAPPED overlap_for_read_async = event_pool.allocate();
 	memset(overlap_for_read_async, 0, sizeof(OVERLAPPED));
 	overlap_for_read_async->hEvent = hReadEvent;
 	callback_map[hReadEvent] = callback;
@@ -81,7 +83,6 @@ void file_io::read_file_async(const char* file_path, char* output_buffer, int am
 	if (!success || error != ERROR_SUCCESS) {
 		throw std::exception("cannot put read file async request on queue");
 	}
-	// WaitForSingleObjectEx(hReadEvent, INFINITE, true);
 	WaitForSingleObjectEx(hReadEvent, INFINITE, true);
 	std::cout << "done in read_file_async" << std::endl;
 }
@@ -97,7 +98,8 @@ void file_io::read_async_completion_routine(DWORD dwErrorCode,
 	read_async = 1;
 	read_async_callback callback = (read_async_callback)callback_map[lpOverlapped->hEvent];
 	callback((int)dwNumberOfBytesTransfered);
-	delete lpOverlapped;
+	event_pool.deallocate(lpOverlapped);
+	CloseHandle(lpOverlapped->hEvent);
 }
 
 bool file_io::create_dir(const char* dir_path) {

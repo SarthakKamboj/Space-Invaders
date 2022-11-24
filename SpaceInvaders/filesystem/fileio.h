@@ -1,6 +1,7 @@
 #pragma once
 
 #include "windows.h"
+#include "allocators/pool_alloc.h"
 
 namespace file_io {
 
