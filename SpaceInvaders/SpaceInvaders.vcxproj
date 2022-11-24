@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="allocators\frame_alloc.cpp" />
     <ClCompile Include="allocators\stack_alloc.cpp" />
+    <ClCompile Include="filesystem\fileio.cpp" />
     <ClCompile Include="filesystem\filepath.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -152,6 +153,7 @@
     <ClInclude Include="allocators\frame_alloc.h" />
     <ClInclude Include="allocators\pool_alloc.h" />
     <ClInclude Include="allocators\stack_alloc.h" />
+    <ClInclude Include="filesystem\fileio.h" />
     <ClInclude Include="filesystem\filepath.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

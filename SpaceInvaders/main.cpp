@@ -3,12 +3,14 @@
 #include "allocators/pool_alloc.h"
 #include "allocators/frame_alloc.h"
 #include "filesystem/filepath.h"
+#include "filesystem/fileio.h"
 
 #define TEST_STACK_ALLOC 0
 #define TEST_POOL_ALLOC 0
 #define TEST_SINGLE_FRAME_STACK_ALLOC 0
 #define TEST_DOUBLE_FRAME_STACK_ALLOC 0
-#define TEST_FILEPATH 1
+#define TEST_FILEPATH 0
+#define TEST_FILEIO 1
 
 void print_dirs(const filenames_t& filenames) {
 	printf("\n");
@@ -116,7 +118,7 @@ int main() {
 		double_frame_alloc.handle_eof();
 	}
 
-#elif TEST_FILEPATH
+#elif TEST_FILEPATH == 1
 
 	// len 61
 	filepath_t filepath("C:\\Sarthak\\programming\\SpaceInvaders\\SpaceInvaders\\allocators");
@@ -155,6 +157,15 @@ int main() {
 	const char* filename = filepath.get_filename();
 	bool is_dir = filepath.is_directory();
 
+#elif TEST_FILEIO == 1
+	// const char file_path[] = "C:\\Sarthak\\programming\\SpaceInvaders\\SpaceInvaders\\allocators\\test.txt";
+	const char file_path[] = "C:\\Sarthak\\programming\\SpaceInvaders\\art\\pico8_invaders_SPLASH.png";
+	bool success = file_io::create_file(file_path, false);
+
+	char* buffer = new char[2560];
+	int amount_read = 0;
+	file_io::read_file_sync(file_path, buffer, 2560, amount_read);
+	// success = file_io::delete_file("C:\\Sarthak\\programming\\SpaceInvaders\\SpaceInvaders\\allocators\\test.txt");
 
 
 #endif
