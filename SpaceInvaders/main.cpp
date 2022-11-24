@@ -12,6 +12,12 @@
 #define TEST_FILEPATH 0
 #define TEST_FILEIO 1
 
+int read_async = 0;
+
+void callback(int num_bytes_read) {
+	std::cout << "num_bytes_read: " << num_bytes_read << std::endl;
+}
+
 void print_dirs(const filenames_t& filenames) {
 	printf("\n");
 	for (const auto& filename : filenames) {
@@ -158,13 +164,28 @@ int main() {
 	bool is_dir = filepath.is_directory();
 
 #elif TEST_FILEIO == 1
+
 	// const char file_path[] = "C:\\Sarthak\\programming\\SpaceInvaders\\SpaceInvaders\\allocators\\test.txt";
-	const char file_path[] = "C:\\Sarthak\\programming\\SpaceInvaders\\art\\pico8_invaders_SPLASH.png";
+	// const char file_path[] = "C:\\Sarthak\\programming\\VulkanGraphicsEngine\\assets\\viking_room.obj";
+	const char file_path[] = "C:\\Sarthak\\programming\\SpaceInvaders\\art\\couch.fbx";
+	const char dir_path[] = "C:\\Sarthak\\programming\\SpaceInvaders\\SpaceInvaders\\allocators";
+	const char dir_path_2[] = "C:\\Sarthak\\programming\\SpaceInvaders\\SpaceInvaders\\allocators\\test";
+	const char dir_path_3[] = "C:\\programming\\a\\SpaceInvaders\\allocators\\test";
+	// const char file_path[] = "C:\\Sarthak\\programming\\SpaceInvaders\\art\\pico8_invaders_SPLASH.png";
+
+	// file_io::create_dir(dir_path);
+	// file_io::create_dir(dir_path_2);
+	// file_io::create_dir(dir_path_3);
+
 	bool success = file_io::create_file(file_path, false);
 
-	char* buffer = new char[2560];
+	int file_size = file_io::get_file_size(file_path);
+	char* buffer = new char[file_size];
+	memset(buffer, 0, file_size);
 	int amount_read = 0;
-	file_io::read_file_sync(file_path, buffer, 2560, amount_read);
+	// file_io::read_file_sync(file_path, buffer, file_size, amount_read);
+	file_io::read_file_async(file_path, buffer, file_size, callback);
+	while (!read_async) {}
 	// success = file_io::delete_file("C:\\Sarthak\\programming\\SpaceInvaders\\SpaceInvaders\\allocators\\test.txt");
 
 
