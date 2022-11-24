@@ -82,21 +82,20 @@ int main() {
 	}
 	*/
 
-	const int pool_size = 1;
+	const int pool_size = 10;
 	pool_alloc_t<int, pool_size> int_pool;
 
 	typedef pool_chunk_t<int, pool_size> pct;
 
-	pct* a_ptr = int_pool.allocate();
-	*a_ptr->data_ptr = 5;
+	int* a_ptr = int_pool.allocate();
+	*a_ptr = 5;
 	int_pool.deallocate(a_ptr);
 
-	pct* b_ptr = int_pool.allocate();
-	*b_ptr->data_ptr = 10;
+	int* b_ptr = int_pool.allocate();
+	*b_ptr = 10;
 
-	int_pool.deallocate(b_ptr);
-	pct* c_ptr = int_pool.allocate();
-	*c_ptr->data_ptr = 20;
+	int* c_ptr = int_pool.allocate();
+	*c_ptr = 20;
 
 #elif TEST_SINGLE_FRAME_STACK_ALLOC == 1
 	single_frame_alloc_t single_frame_alloc;
