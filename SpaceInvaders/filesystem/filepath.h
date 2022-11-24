@@ -19,10 +19,9 @@ public:
 	bool is_directory();
 	void list_subdir_and_subfiles(filenames_t& filename_chunks);
 	const char* get_filename();
-	bool is_valid_path();
 	bool is_valid_path(const char* path);
 
 private:
 	int num_parts = 0;
-
+	pool_alloc_t<std::array<char, MAX_PATH>, 256> filepath_pool;
 };

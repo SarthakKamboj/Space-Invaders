@@ -29,13 +29,9 @@ filepath_t::filepath_t(const char* path) {
 }
 
 bool filepath_t::is_valid_path(const char* path) {
+	if (path == NULL) return false;
 	DWORD file_attrib = GetFileAttributesA(path);
 	return file_attrib != INVALID_FILE_ATTRIBUTES;
-}
-
-bool filepath_t::is_valid_path() {
-	if (path_str == NULL) return false;
-	return is_valid_path(path_str);
 }
 
 void filepath_t::go_to_parent_directory() {
